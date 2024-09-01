@@ -5,19 +5,20 @@ namespace Amp\Parallel\Test\Worker;
 use Amp\Parallel\Context\ProcessContextFactory;
 use Amp\Parallel\Worker\ContextWorkerFactory;
 use Amp\Parallel\Worker\ContextWorkerPool;
+use Amp\Parallel\Worker\DelegatingWorkerPool;
 use Amp\Parallel\Worker\WorkerPool;
 
-class ProcessPoolTest extends AbstractPoolTest
+class DelegatingWorkerPoolTest extends AbstractPoolTest
 {
     protected function createPool(
         int $max = WorkerPool::DEFAULT_WORKER_LIMIT,
         ?string $autoloadPath = null,
     ): WorkerPool {
-        $factory = new ContextWorkerFactory(
-            bootstrapPath: $autoloadPath,
-            contextFactory: new ProcessContextFactory(),
+        $pool = new ContextWorkerPool(
+            limit: $max * 2,
+            factory: new ContextWorkerFactory($autoloadPath, contextFactory: new ProcessContextFactory()),
         );
 
-        return new ContextWorkerPool($max, $factory);
+        return new DelegatingWorkerPool($pool, $max);
     }
 }

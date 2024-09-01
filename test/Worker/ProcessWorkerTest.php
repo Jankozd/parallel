@@ -2,20 +2,19 @@
 
 namespace Amp\Parallel\Test\Worker;
 
-use Amp\Cancellation;
-use Amp\Parallel\Context\Context;
-use Amp\Parallel\Context\ContextFactory;
 use Amp\Parallel\Context\ProcessContextFactory;
+use Amp\Parallel\Worker\ContextWorkerFactory;
+use Amp\Parallel\Worker\Worker;
 
 class ProcessWorkerTest extends AbstractWorkerTest
 {
-    public function createContextFactory(): ContextFactory
+    protected function createWorker(?string $autoloadPath = null): Worker
     {
-        return new class implements ContextFactory {
-            public function start(array|string $script, ?Cancellation $cancellation = null): Context
-            {
-                return (new ProcessContextFactory())->start($script, cancellation: $cancellation);
-            }
-        };
+        $factory = new ContextWorkerFactory(
+            bootstrapPath: $autoloadPath,
+            contextFactory: new ProcessContextFactory(),
+        );
+
+        return $factory->create();
     }
 }

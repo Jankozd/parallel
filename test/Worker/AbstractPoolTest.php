@@ -5,8 +5,6 @@ namespace Amp\Parallel\Test\Worker;
 use Amp\Future;
 use Amp\Parallel\Context\StatusError;
 use Amp\Parallel\Test\Worker\Fixtures\TestTask;
-use Amp\Parallel\Worker\ContextWorkerFactory;
-use Amp\Parallel\Worker\ContextWorkerPool;
 use Amp\Parallel\Worker\Execution;
 use Amp\Parallel\Worker\Task;
 use Amp\Parallel\Worker\Worker;
@@ -180,15 +178,8 @@ abstract class AbstractPoolTest extends AbstractWorkerTest
         return $this->createPool(autoloadPath: $autoloadPath);
     }
 
-    protected function createPool(
+    abstract protected function createPool(
         int $max = WorkerPool::DEFAULT_WORKER_LIMIT,
-        ?string $autoloadPath = null
-    ): WorkerPool {
-        $factory = new ContextWorkerFactory(
-            bootstrapPath: $autoloadPath,
-            contextFactory: $this->createContextFactory(),
-        );
-
-        return new ContextWorkerPool($max, $factory);
-    }
+        ?string $autoloadPath = null,
+    ): WorkerPool;
 }

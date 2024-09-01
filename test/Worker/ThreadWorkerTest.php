@@ -2,25 +2,24 @@
 
 namespace Amp\Parallel\Test\Worker;
 
-use Amp\Cancellation;
-use Amp\Parallel\Context\Context;
-use Amp\Parallel\Context\ContextFactory;
 use Amp\Parallel\Context\ThreadContext;
 use Amp\Parallel\Context\ThreadContextFactory;
+use Amp\Parallel\Worker\ContextWorkerFactory;
+use Amp\Parallel\Worker\Worker;
 
 class ThreadWorkerTest extends AbstractWorkerTest
 {
-    public function createContextFactory(): ContextFactory
+    protected function createWorker(?string $autoloadPath = null): Worker
     {
         if (!ThreadContext::isSupported()) {
             $this->markTestSkipped('ext-parallel required');
         }
 
-        return new class implements ContextFactory {
-            public function start(array|string $script, ?Cancellation $cancellation = null): Context
-            {
-                return (new ThreadContextFactory())->start($script, cancellation: $cancellation);
-            }
-        };
+        $factory = new ContextWorkerFactory(
+            bootstrapPath: $autoloadPath,
+            contextFactory: new ThreadContextFactory(),
+        );
+
+        return $factory->create();
     }
 }
