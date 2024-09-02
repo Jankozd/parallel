@@ -116,6 +116,11 @@ final class DelegatingWorkerPool implements WorkerPool
         return new PooledWorker($this->selectWorker(), $this->push(...));
     }
 
+    public function getLimit(): int
+    {
+        return $this->limit;
+    }
+
     public function getWorkerCount(): int
     {
         return \min($this->limit, $this->pool->getWorkerCount());
